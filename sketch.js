@@ -7,6 +7,11 @@ var oppYellow1Img,oppYellow2Img;
 var oppRed1Img,oppRed2Img;
 var gameOverImg,cycleBell;
 
+var cone, hole, nail
+var car1
+
+var coneG, holeG, nailG, carG
+
 var pinkCG, yellowCG,redCG; 
 
 var END =0;
@@ -32,6 +37,11 @@ function preload(){
   
   cycleBell = loadSound("bell.mp3");
   gameOverImg = loadImage("gameOver.png");
+
+  cone = loadImage ("obstacle1.png");
+  hole = loadImage ("obstacle2.png");
+  nail = loadImage ("obstacle3.png");
+  car1 = loadImage ("car1.png")
 }
 
 function setup(){
@@ -49,12 +59,8 @@ mainCyclist.scale=0.07;
   
 //set collider for mainCyclist
 
-//mainCyclist.setCollission("rectangle",0,0,40,40);
 mainCyclist.setCollider("rectangle",0,0,40,40);
-//mainCyclist.setCollission("rectangle",0,0,40,40,50);
-//mainCyclist.setCollider("rectangle",0,0,40,40,50);
 
-  
 gameOver = createSprite(650,150);
 gameOver.addImage(gameOverImg);
 gameOver.scale = 0.8;
@@ -63,7 +69,13 @@ gameOver.visible = false;
 pinkCG = new Group();
 yellowCG = new Group();
 redCG = new Group();
-  
+
+coneG = new Group();
+holeG = new Group();
+nailG = new Group();
+carG = new Group();
+
+
 }
 
 function draw() {
@@ -95,14 +107,27 @@ function draw() {
   }
   
   //creating continous opponent players
-  var select_oppPlayer = Math.round(random(1,3));
+  var select_oppPlayer = Math.round(random(1,7));
   
   if (World.frameCount % 150 == 0) {
     if (select_oppPlayer == 1) {
       pinkCyclists();
     } else if (select_oppPlayer == 2) {
       yellowCyclists();
-    } else {
+    }
+    else if (select_oppPlayer == 3){
+      cones();
+    }
+    else if (select_oppPlayer == 4){
+      nails();
+    }
+    else if (select_oppPlayer == 5){
+      holes();
+    }
+    else if (select_oppPlayer == 6){
+      cars();
+    }
+    else {
       redCyclists();
     }
   }
@@ -125,6 +150,15 @@ function draw() {
       player3.addAnimation("opponentPlayer3",oppRed2Img);
     }
     
+    if (coneG.isTouching(mainCyclist)||nailG.isTouching(mainCyclist)||holeG.isTouching(mainCyclist))
+    {
+      gameState = END
+    }
+    if (carG.isTouching(mainCyclist))
+    {
+      gameState = END;
+    }
+
 }else if (gameState === END) {
     gameOver.visible = true;
   
@@ -145,17 +179,17 @@ function draw() {
     redCG.setVelocityXEach(0);
     redCG.setLifetimeEach(-1);
     
-    // if(keyDown("UP_ARROW")) {
-    //   reset;
-    // }
+    coneG.setVelocityXEach(0);
+    coneG.setLifetimeEach(-1);
 
-    // if(key("UP_ARROW")) {
-    //   reset();
-    // }
+    holeG.setVelocityXEach(0);
+    holeG.setLifetimeEach(-1);
 
-    // if(keyDown()) {
-    //   reset();
-    // }
+    nailG.setVelocityXEach(0);
+    nailG.setLifetimeEach(-1);
+
+    carG.setVelocityXEach(0);
+    carG.setLifetimeEach(-1);
 
     if(keyDown("UP_ARROW")) {
        reset();
@@ -190,29 +224,41 @@ function redCyclists(){
         redCG.add(player3);
 }
 
-//function reset{
-//  gameState = END;
-//  gameOver.visible = false;
-//  mainCyclist.addAnimation("SahilRunning",mainRacerImg1);
-  
-//  pinkCG.destroyEach();
-//  yellowCG.destroyEach();
-//  redCG.destroyEach();
-  
-//  distance = 0;
-// }
+function cones(){
+obstacle1 = createSprite (1100, Math.round(random(50,250)));
+obstacle1.scale = 0.1;
+obstacle1.velocityX = -(6 + 2*distance/150);
+obstacle1.addImage ("cone", cone);
+obstacle1.setLifetime = 170;
+coneG.add(obstacle1);
+}
 
-//function reset{
-//  gameState = PLAY;
-//  gameOver.visible = true;
-//  mainCyclist.addAnimation("SahilRunning",mainRacerImg1);
-  
-//  pinkCG.destroy();
-//  yellowCG.destroy();
-//  redCG.destroy();
-  
-//  distance = 0;
-// }
+function holes(){
+  obstacle2 = createSprite (1100, Math.round(random(50,250)));
+  obstacle2.scale = 0.1;
+  obstacle2.velocityX = -(6 + 2*distance/150);
+  obstacle2.addImage ("hole", hole);
+  obstacle2.setLifetime = 170;
+  holeG.add(obstacle2)
+}
+
+function nails(){
+  obstacle3 = createSprite (1100, Math.round(random(50,250)));
+  obstacle3.scale = 0.1;
+  obstacle3.velocityX = -(6 + 2*distance/150);
+  obstacle3.addImage ("nail", nail);
+  obstacle3.setLifetime = 170;
+  nailG.add(obstacle3)
+}
+
+function cars() {
+  obstacle4 = createSprite (1100, Math.round(random(50,250)));
+  obstacle4.scale = 0.3;
+  obstacle4.velocityX = -(6 + 2*distance/150);
+  obstacle4.addImage ("car", car1);
+  obstacle4.setLifetime = 170;
+  carG.add(obstacle4)
+}
 
 function reset(){
   gameState = PLAY;
@@ -222,20 +268,9 @@ function reset(){
   pinkCG.destroyEach();
   yellowCG.destroyEach();
   redCG.destroyEach();
+  nailG.destroyEach();
+  holeG.destroyEach();
+  coneG.destroyEach();
   
   distance = 0;
  }
-
-//function reset(){
-//  gameState = END;
-//  gameOver.visible = true;
-//  mainCyclist.addAnimation("SahilRunning",mainRacerImg1);
-  
-//  pinkCG.destroyEach();
-//  yellowCG.destroyEach();
-//  redCG.destroyEach();
-  
-//  distance = 50;
-// }
-
-
